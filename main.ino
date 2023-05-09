@@ -119,10 +119,7 @@ void printWEB()
 		}
 		if (clientRequest.startsWith("GET /temperature HTTP/1.1"))
 		{
-			String sTemperature = "";
-			sTemperature += "{\"data\":{\"temp\": ";
-			sTemperature += String(readTemp());
-			sTemperature += "}}";
+			String sTemperature = "{\"data\":{\"temp\": " + String(readTemp()) + "}}";
 
 			client.println("HTTP/1.1 200 OK");
 			client.println("Content-type:application/json");
