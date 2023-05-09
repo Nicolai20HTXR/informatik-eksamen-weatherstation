@@ -117,7 +117,7 @@ void printWEB()
 				}
 			}
 		}
-		if (clientRequest.startsWith("GET /test HTTP/1.1"))
+		if (clientRequest.startsWith("GET /temperature HTTP/1.1"))
 		{
 			String sTemperature = "";
 			sTemperature += "{\"data\":{\"temp\": ";
@@ -135,7 +135,7 @@ void printWEB()
 			client.println("HTTP/1.1 200 OK");
 			client.println("Content-type:text/html");
 			client.println();
-			client.println("404");
+			client.println("404 Page not found.");
 			client.println();
 		}
 		// close the connection:
