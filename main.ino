@@ -116,7 +116,7 @@ void printWEB()
 				}
 			}
 		}
-		if (clientRequest.startsWith("GET /temperature HTTP/1.1"))
+		if (clientRequest.startsWith("GET /temperature HTTP/1.1")) // Client routing to temperature different http reponse
 		{
 			String sTemperature = "{\"data\":{\"temp\": " + String(readTemp()) + "}}";
 
@@ -127,7 +127,7 @@ void printWEB()
 			client.println();
 		}
 		else
-		{
+		{ // If no routing go to 404 text
 			client.println("HTTP/1.1 200 OK");
 			client.println("Content-type:text/html");
 			client.println();
