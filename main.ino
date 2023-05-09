@@ -103,71 +103,44 @@ void printWEB()
 	if (client)
 	{								  // if you get a client,
 		Serial.println("new client"); // print a message out the serial port
-		String currentLine = "";	  // make a String to hold incoming data from the client
+		String clientRequest = "";	  // make a String to hold incoming data from the client
 		bool toTemp = false;
 		while (client.connected())
 		{ // loop while the client's connected
 			if (client.available())
 			{							// if there's bytes to read from the client,
 				char c = client.read(); // read a byte, then
-				Serial.write(c);		// print it out the serial monitor
-				if (c == '\n')
-				{ // if the byte is a newline character
-
-					// if the current line is blank, you got two newline characters in a row.
-					// that's the end of the client HTTP request, so send a response:
-					if (currentLine == "GET /test HTTP/1.1")
-					{
-						toTemp = true;
-					}
-					else if (currentLine.length() == 0)
-					{
-
-						// HTTP headers always start with a response code (e.g. HTTP/1.1 200 OK)
-						// and a content-type so the client knows what's coming, then a blank line:
-						if (toTemp)
-						{
-							client.println("HTTP/1.1 200 OK");
-							client.println("Content-type:application/json");
-							client.println();
-							int a = analogRead(A0);
-
-							float R = 1023.0 / ((float)a) - 1.0;
-							R = 100000.0 * R;
-
-							float temperature = 1.0 / (log(R / 100000.0) / 4275 + 1 / 298.15) - 273.15;
-							client.print("{\"data\":{\"temp\": ");
-							client.print(temperature);
-							client.print("}}");
-							client.println();
-							// break out of the while loop:
-							break;
-						}
-						client.println("HTTP/1.1 200 OK");
-						client.println("Content-type:text/html");
-						client.println();
-						client.print("<p>Temperature:</p><p id=\"test\">Loading...</p>");
-						client.print("<p>Counter:</p><p id=\"testy\">1</p>");
-
-						client.print(String("<script>setInterval(()=>{fetch(") + String(WiFi.localIP()) + String("/test\",{mode: \"same-origin\", referrerPolicy: \"origin\"}).then((r) => {return r.text()}).then((text)=>{document.querySelector(\"#test\").innerHTML = JSON.parse(text)[\"data\"][\"temp\"]})},10000)</script>"));
-						client.print(String("<script>setInterval(()=>{document.querySelector(\"#testy\").innerHTML = parseInt(document.querySelector(\"#testy\").innerHTML) + 1},10000)</script>"));
-						client.println();
-						// break out of the while loop:
-						break;
-					}
-					else
-					{ // if you got a newline, then clear currentLine:
-						currentLine = "";
-					}
-				}
-				else if (c != '\r')
-				{					  // if you got anything else but a carriage return character,
-					currentLine += c; // add it to the end of the currentLine
+				clientRequest += c;
+				if (clientRequest.endsWith("\r\n\r\n"))
+				{
+					break;
 				}
 			}
 		}
+		if (clientRequest.startsWith("GET /test HTTP/1.1"))
+		{
+			String sTemperature = "";
+			sTemperature += "{\"data\":{\"temp\": ";
+			sTemperature += String(readTemp());
+			sTemperature += "}}";
+
+			client.println("HTTP/1.1 200 OK");
+			client.println("Content-type:application/json");
+			client.println();
+			client.println(sTemperature);
+			client.println();
+		}
+		else
+		{
+			client.println("HTTP/1.1 200 OK");
+			client.println("Content-type:text/html");
+			client.println();
+			client.println("404");
+			client.println();
+		}
 		// close the connection:
 		client.stop();
+		Serial.println(clientRequest);
 		Serial.println("client disconnected");
 	}
 }
