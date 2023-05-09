@@ -13,7 +13,8 @@ void setup()
 {
 	Serial.begin(9600);
 	while (!Serial)
-		;
+	{
+	};
 
 	enable_WiFi();
 	connect_WiFi();
@@ -61,7 +62,8 @@ void enable_WiFi()
 		Serial.println("Communication with WiFi module failed!");
 		// don't continue
 		while (true)
-			;
+		{
+		};
 	}
 
 	String fv = WiFi.firmwareVersion();
@@ -138,7 +140,7 @@ void printWEB()
 						client.print("<p>Temperature:</p><p id=\"test\">Loading...</p>");
 						client.print("<p>Counter:</p><p id=\"testy\">1</p>");
 
-						client.print(String("<script>setInterval(()=>{fetch(\"http://84.238.45.37:80") + String("/test\",{mode: \"same-origin\", referrerPolicy: \"origin\"}).then((r) => {return r.text()}).then((text)=>{document.querySelector(\"#test\").innerHTML = JSON.parse(text)[\"data\"][\"temp\"]})},10000)</script>"));
+						client.print(String("<script>setInterval(()=>{fetch(") + String(WiFi.localIP()) + String("/test\",{mode: \"same-origin\", referrerPolicy: \"origin\"}).then((r) => {return r.text()}).then((text)=>{document.querySelector(\"#test\").innerHTML = JSON.parse(text)[\"data\"][\"temp\"]})},10000)</script>"));
 						client.print(String("<script>setInterval(()=>{document.querySelector(\"#testy\").innerHTML = parseInt(document.querySelector(\"#testy\").innerHTML) + 1},10000)</script>"));
 						client.println();
 						// break out of the while loop:
