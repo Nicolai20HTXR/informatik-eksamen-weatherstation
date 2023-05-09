@@ -1,5 +1,4 @@
 #include <WiFiNINA.h>
-// Am i in test-branch?
 
 char ssid[] = "SSID of WiFi";	   //  your network SSID (name) between the " "
 char pass[] = "Password for WiFi"; // your network password between the " "
@@ -83,13 +82,15 @@ void connect_WiFi()
 		// Connect to WPA/WPA2 network. Change this line if using open or WEP network:
 		status = WiFi.begin(ssid, pass);
 
-		// wait 10 seconds for connection:
+		// wait 2.5 seconds for connection:
 		delay(2500);
 	}
 }
+
 float readTemp()
 {
-	int a = analogRead(A0);
+	int a = analogRead(A0); // Port for the temperature module
+	// Some math for getting temperature to celcius
 	float R = 1023.0 / ((float)a) - 1.0;
 	R = 100000.0 * R;
 	float temperature = 1.0 / (log(R / 100000.0) / 4275 + 1 / 298.15) - 273.15;
@@ -99,17 +100,15 @@ float readTemp()
 
 void printWEB()
 {
-
 	if (client)
-	{								  // if you get a client,
-		Serial.println("new client"); // print a message out the serial port
-		String clientRequest = "";	  // make a String to hold incoming data from the client
-		bool toTemp = false;
+	{								  // If you get a client,
+		Serial.println("new client"); // Debug new client serial monitor
+		String clientRequest = "";	  // Make a String to hold incoming data from the client http request
 		while (client.connected())
 		{ // loop while the client's connected
 			if (client.available())
-			{							// if there's bytes to read from the client,
-				char c = client.read(); // read a byte, then
+			{							// If there's bytes to read from the client, usually the http request from client
+				char c = client.read(); // Read the http request until end and break out of while loop
 				clientRequest += c;
 				if (clientRequest.endsWith("\r\n\r\n"))
 				{
