@@ -128,7 +128,7 @@ void printWEB()
 		}
 		else
 		{ // If no routing go to 404 text
-			client.println("HTTP/1.1 200 OK");
+			client.println("HTTP/1.1 404 Not Found");
 			client.println("Content-type:text/html");
 			client.println();
 			client.println("404 Page not found.");
