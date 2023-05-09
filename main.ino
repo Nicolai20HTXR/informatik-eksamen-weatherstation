@@ -87,6 +87,15 @@ void connect_WiFi()
 		delay(2500);
 	}
 }
+float readTemp()
+{
+	int a = analogRead(A0);
+	float R = 1023.0 / ((float)a) - 1.0;
+	R = 100000.0 * R;
+	float temperature = 1.0 / (log(R / 100000.0) / 4275 + 1 / 298.15) - 273.15;
+
+	return temperature;
+}
 
 void printWEB()
 {
